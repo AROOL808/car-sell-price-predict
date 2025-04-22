@@ -1,0 +1,122 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden animate__animated animate__fadeIn" x-data="{ prediction: {{ 'true' if prediction else 'false' }} }">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+                <h1 class="text-2xl font-bold text-white text-center">Car Price Prediction</h1>
+                <p class="text-blue-100 text-center mt-2">Predict the selling price of a car using machine learning</p>
+            </div>
+            
+            <div class="p-6">
+                <form method="post" class="space-y-6 animate__animated animate__fadeInUp animate__delay-1s">
+                    <div>
+                        <label for="year" class="block text-sm font-medium text-gray-700">Manufacturing Year</label>
+                        <div class="mt-1">
+                            <input type="number" id="year" name="year" required min="1900" max="2025" step="1"
+                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-300">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="engine" class="block text-sm font-medium text-gray-700">Engine Size (CC)</label>
+                        <div class="mt-1">
+                            <input type="number" id="engine" name="engine" required min="0" step="1"
+                                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-300">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" 
+                                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 transition duration-300">
+                            Predict Price
+                        </button>
+                    </div>
+                </form>
+                
+                {% if prediction %}
+                <div class="mt-6 bg-green-50 border border-green-200 rounded-md p-4 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800">Predicted Selling Price</h3>
+                            <div class="mt-2 text-sm text-green-700">
+                                <p class="text-2xl font-bold">${{ prediction }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-8 bg-gray-50 border border-gray-200 rounded-md p-4 animate__animated animate__fadeInUp animate__delay-3s">
+                    <h3 class="text-lg font-medium text-gray-900">Model Information</h3>
+                    
+                    <div class="mt-3 text-sm text-gray-600">
+                        <p class="mb-2">This prediction is based on multivariate linear regression using car year and engine size.</p>
+                        
+                        <div class="flex flex-col space-y-2 mb-2">
+                            <div class="flex items-center">
+                                <span class="font-medium mr-2">Mean Absolute Error (MAE):</span> 
+                                <span>${{ mae }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-medium mr-2">Relative MAE:</span>
+                                <span>{{ relative_mae }}%</span>
+                                <div class="ml-2 group relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <div class="absolute bottom-6 left-0 w-64 bg-black text-white text-xs rounded p-2 hidden group-hover:block">
+                                        Relative MAE is the Mean Absolute Error expressed as a percentage of the average actual price. Lower values indicate better accuracy.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex flex-col space-y-2">
+                            <p class="font-medium">Sources:</p>
+                            <a href="https://github.com/username/car-dataset" 
+                               class="text-indigo-600 hover:text-indigo-800 transition duration-300"
+                               target="_blank">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Dataset Source on GitHub
+                                </div>
+                            </a>
+                            <a href="https://github.com/username/car-price-notebook" 
+                               class="text-indigo-600 hover:text-indigo-800 transition duration-300"
+                               target="_blank">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    Calculation Methodology Notebook
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 text-center text-xs text-gray-500 animate__animated animate__fadeIn animate__delay-4s">
+                &copy; 2025 Car Price Prediction Tool
+            </div>
+        </div>
+    </div>
+</body>
+</html>
